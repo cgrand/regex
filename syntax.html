@@ -1,0 +1,46 @@
+<html>
+<head>
+<title>Regex syntax</title>
+<style type='text/css'>
+	code {font-style: normal; font-weight: bold; color: black; background-color: #eee}
+	.syntax { color: #666; font-style: italic;}
+	.syntax dd:before {content: "| "}
+	.css-equiv {font-size: 60%}
+	h3 {margin: 0; font-size: 100%;}
+	pre {margin: 0; margin-left: 1ex; color: #666;}
+	dt {margin-top: 1ex;}</style>
+</head>
+<body>
+<h1><a href="http://github.com/cgrand/regex/tree/master">Regex</a> syntax</h1>
+<dl class="syntax">
+<dt id="regex"><a href="#regex">regex</a></dt>
+    <dd><code>(regex</code> <a href="#group">group</a> <code>)</code></dd>
+    
+<dt id="group"><a href="#group">group</a></dt>
+    <dd><a href="#fragment">fragment</a>* (<code>:as</code> <code>:a-name</code>)? ; capturing only when named</dd>
+
+<dt id="fragment"><a href="#fragment">fragment</a></dt>
+    <dd><code>\character</code></dd>
+    <dd><code>"string"</code></dd>
+    <dd><code>{</code> (<a href="#char">char</a> <a href="#char">char</a>)* <code>}</code> ; char ranges, both ends inclusive</dd>
+    <dd><code>[</code> <a href="#group">group</a> <code>]</code></dd>
+    <dd><code>#{</code> <a href="#fragment">fragment</a>* <code>}</code> ; alternative</dd>
+    <dd><code>a-symbol</code> ; must evaluate to a fragment</dd>
+    <dd><code>(some clojure code)</code> ; must evaluate to a fragment</dd>
+    <dd>; predefined helpers:</dd>
+    <dd><code>any</code> ; 1-character wildcard, aka .</dd>
+    <dd><code>(repeat</code> fragment <code>)</code> ; 0 to &infin;</dd>
+    <dd><code>(repeat</code> fragment min <code>)</code> ; min to &infin;</dd>
+    <dd><code>(repeat</code> fragment min max <code>)</code> ; min to max</dd>
+    <dd><code>(*</code> <a href="#group">group</a> <code>)</code> ; shorthand for (repeat [group])</dd>
+    <dd><code>(+</code> <a href="#group">group</a> <code>)</code> ; shorthand for (repeat [group] 1)</dd>
+    <dd><code>(?</code> <a href="#group">group</a> <code>)</code> ; shorthand for (repeat [group] 0 1)</dd>
+
+<dt id="char"><a href="#char">char</a></dt>
+    <dd><code>\character</code></dd>
+    <dd><code>a-symbol</code> ; must evaluate to a character</dd>
+    <dd><code>(some clojure code)</code> ; must evaluate to a character</dd>
+
+</dl>
+</body>
+</htmL>

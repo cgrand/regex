@@ -1,0 +1,7 @@
+net.cgrand.regex is a Clojure notation (DSL) for regexes.
+
+Regexes are already a DSL of their own but a write-only DSL. 
+
+This DSL allows to reuse regexes or parts of them and also adds support for named groups.
+
+This project started as a toy/lab for the DSL course at "Conj Labs Brussels":http://conj-labs.eu back in June 2010.    
