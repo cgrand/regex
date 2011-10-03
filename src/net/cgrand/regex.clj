@@ -121,7 +121,7 @@
 )
 
 ;; Compile-time simplification/optimization
-(def *optimize* true)
+(def ^{:dynamic true} *optimize* true)
 
 (defprotocol RegexFragment
   (static? [this env] "Returns true when the fragment is static.")
