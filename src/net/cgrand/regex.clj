@@ -136,11 +136,7 @@
  [& specs]
   (repeat (vec specs) 0 1))
 
-(def any 
-  (reify 
-    RegexValue
-      (pattern [this] ".")
-      (groupnames [this] [])))
+(def any cs/any-char)
 
 (defrecord PositiveLookahead [frag]
   RegexValue
