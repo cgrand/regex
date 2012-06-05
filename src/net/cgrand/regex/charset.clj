@@ -1,5 +1,5 @@
 (ns net.cgrand.regex.charset
-  (:refer-clojure :exclude [complement * + - not]))
+  (:refer-clojure :exclude [complement * + - not contains?]))
 
 (defprotocol Rangeable
   (ranges [cs]))
@@ -31,6 +31,11 @@
   (boolean (and b c (< (int b) (int c)))))
 
 (def no-char (Charset. (sorted-set-by lt)))
+
+(extend-protocol Charsetable
+  nil
+  (charset [_]
+    no-char))
 
 (defn- pred [c]
   (when (and c (pos? (int c))) (char (dec (int c)))))
@@ -74,28 +79,59 @@
   (charset [x]
     (reduce add no-char (ranges x))))
 
-(defn- complement [cs]
-  (reduce subtract any-char (ranges cs)))
+(defn + "union"
+  ([] no-char)
+  ([a] (charset a))
+  ([a b]
+    (reduce add (charset a) (ranges b)))
+  ([a b & cs] 
+    (reduce + (+ a b) cs)))
 
-(defn- union [a b]
-  (reduce add (charset a) (ranges b)))
-
-(defn- intersection [a b]
-  (complement (union (complement a) (complement b))))
-
-(defn + [& xs] 
-  (reduce union no-char xs))
-
-(defn * [& xs]
-  (reduce intersection any-char xs))
-
-(defn -
-  ([x] (complement x))
+(defn - "complement or asymetric difference"
+  ([x] (reduce subtract any-char (ranges x)))
   ([x & xs]
     (reduce #(reduce subtract %1 (ranges %2)) x xs)))
 
-(defn not [& xs]
-  (complement (reduce + xs)))
+(defn * "intersection"
+  ([] any-char)
+  ([a] (charset a))
+  ([a b]
+    (- (+ (- a) (- b))))
+  ([a b & cs]
+    (- (reduce + (+ (- a) (- b)) (map - cs)))))
 
-(defn disjunction [a b]
-  [(* a b) (- a b) (- b a)])
+(defn not [& xs]
+  (- (reduce + xs)))
+
+(defn pick 
+  "Returns a character contained in the charset or nil if the
+   charset is empty."
+  [cs]
+  (when-let [[a b] (first (ranges cs))]
+    (or a \u0000)))
+
+(defn has? [cs c]
+  (boolean (:cs (charset cs) [c c])))
+
+(defn disjunctive-union
+  "as and bs are collection of disjunct charsets, returns their union as a
+   collection of smaller disjunct charsets." 
+  ([] nil)
+  ([as] as)
+  ([as bs]
+    (let [A (reduce + as)
+          B (reduce + bs)]
+      (filter pick
+        (concat
+          (map #(- % B) as)
+          (map #(- % A) bs)
+          (for [a as b bs] (* a b)))))))
+
+(defn disjunctive-intersection
+  "as and bs are collection of disjunct charsets, returns their intersection
+   as a collection of smaller disjunct charsets." 
+  ([] [any-char])
+  ([as] as)
+  ([as bs]
+    (filter pick
+      (for [a as b bs] (* a b)))))
