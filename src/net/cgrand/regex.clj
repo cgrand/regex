@@ -301,7 +301,7 @@
 
 (defn dfa-to-spec [dfa]
   (let [eqs (reduce substitute dfa (keys (dissoc dfa ::dfa/S)))]
-    (::dfa/accept (first (vals eqs)))))
+    (::dfa/accept (apply solve (first eqs)))))
 
 
 (comment 
