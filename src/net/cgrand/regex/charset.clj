@@ -111,7 +111,7 @@
     (or a \u0000)))
 
 (defn has? [cs c]
-  (boolean (:cs (charset cs) [c c])))
+  (boolean ((:cs (charset cs)) [c c])))
 
 (defn disjunctive-union
   "as and bs are collection of disjunct charsets, returns their union as a
