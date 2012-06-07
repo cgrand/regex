@@ -1,5 +1,5 @@
 (ns net.cgrand.regex.automaton
-  (:refer-clojure :exclude [derive complement])
+  (:refer-clojure :exclude [derive complement + - *])
   (:require [net.cgrand.regex.charset :as cs]))
 
 (defprotocol State
@@ -74,7 +74,7 @@
   (accept? [this]
     (some accept? states)))
 
-(defn union [& dfas]
+(defn union [dfas]
   (dfa (UnionState. (map dfa-state dfas))))
 
 (defrecord IntersectionState [states]
@@ -86,6 +86,19 @@
   (accept? [this]
     (every? accept? states)))
 
-(defn intersection [& dfas]
+(defn intersection [dfas]
   (dfa (IntersectionState. (map dfa-state dfas))))
 
+(defn + "union"
+  ([] nil)
+  ([dfa] dfa)
+  ([dfa & dfas] (union (cons dfa dfas))))
+
+(defn * "intersection"
+  ([] always)
+  ([dfa] dfa)
+  ([dfa & dfas] (intersection (cons dfa dfas))))
+
+(defn - "complement or asymetric difference"
+  ([dfa] (complement dfa))
+  ([dfa & dfas] (* dfa (complement (union dfas)))))
