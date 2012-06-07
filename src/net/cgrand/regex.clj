@@ -303,6 +303,11 @@
   (let [eqs (reduce substitute dfa (keys (dissoc dfa ::dfa/S)))]
     (::dfa/accept (apply solve (first eqs)))))
 
+(defn & [& specs]
+  (dfa-to-spec (dfa/intersection (map dfa/dfa specs))))
+
+(defn - [& specs]
+  (dfa-to-spec (apply dfa/- (map dfa/dfa specs))))
 
 (comment 
   regex=> (exec (regex [(repeat {\a \z}) :as :a] " " [(repeat {\a \z}) :as :b]) 
