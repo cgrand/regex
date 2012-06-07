@@ -135,7 +135,7 @@
   dfa/State
     (accept? [this] (match-empty? this))
     (firsts [m] (dfa/firsts (cs/charset m)))
-    (derives [m c] (dfa/derive (cs/charset m) c)))
+    (derive [m c] (dfa/derive (cs/charset m) c)))
 
 (extend-type net.cgrand.regex.charset.Charset
   RegexValue
