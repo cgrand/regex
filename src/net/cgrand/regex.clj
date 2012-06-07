@@ -184,9 +184,10 @@
     (derive [this c]
       (when-let [dfrag (dfa/derive frag c)]
         (cond
-          (and max (< min max)) (list dfrag (Repeat. frag min (dec max)))
-          (= min max) dfrag
-          (nil? max) (list dfrag this)))))
+          (pos? min) (list dfrag (Repeat. frag (dec min) (when max (dec max))))
+          (and max (pos? max)) (list dfrag (Repeat. frag 0 (dec max)))
+          (nil? max) (list dfrag this)
+          :else dfrag))))
 
 (defn repeat 
  ([spec] (Repeat. spec 0 nil))  
