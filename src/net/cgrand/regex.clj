@@ -2,7 +2,7 @@
   "A DSL for people who prefer verbose, maintenable regexes to terse 
    now-you-have-two-problems ones."
   {:author "Christophe Grand"}
-  (:refer-clojure :exclude [repeat + * resolve derive])
+  (:refer-clojure :exclude [repeat + * - resolve])
   (:require [clojure.core :as core]
             [clojure.string :as s]
             [net.cgrand.regex.charset :as cs]
