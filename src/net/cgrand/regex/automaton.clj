@@ -14,6 +14,8 @@
     (firsts [_] nil)
     (derive [_ c] nil))
 
+(def always {::S {::S cs/any-char ::accept []}})
+
 (defn dfa [state]
   (loop [transitions {} todo #{state}]
     (if-let [[x] (seq todo)]
@@ -30,14 +32,6 @@
         (recur transitions todo))
       (assoc transitions ::S (transitions state)))))
 
-(defn complement [dfa]
-  (into {::F {::accept [] ::F cs/any-char}}
-    (for [[x rhs] dfa]
-      (let [rhs (if (::accept rhs) (dissoc rhs ::accept) rhs)
-            other-chars (reduce cs/- cs/any-char (vals (dissoc rhs ::accept)))
-            rhs (if (cs/pick other-chars) (assoc rhs ::F other-chars) rhs)]
-        [x rhs]))))
-
 (defrecord DFAState [dfa x]
   State
   (firsts [this]
@@ -53,6 +47,23 @@
   ([dfa] (dfa-state dfa ::S))
   ([dfa x]
     (DFAState. dfa x)))
+
+(defrecord ComplementState [dfa x]
+  State
+  (firsts [this]
+    (let [css (vals (dissoc (dfa x) ::accept))
+          ccs (reduce cs/- cs/any-char css)]
+      (cons ccs css)))
+  (derive [this c]
+    (if-let [y (some (fn [[x cs]] (when (cs/has? cs c) x))
+                       (dissoc (dfa x) ::accept))]
+      (ComplementState. dfa y)
+      (dfa-state always)))
+  (accept? [this]
+    (not (::accept (dfa x)))))
+
+(defn complement [dfb]
+  (dfa (ComplementState. dfb ::S)))
 
 (defrecord UnionState [states]
   State
