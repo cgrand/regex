@@ -32,7 +32,7 @@
 (defn exec [re s]
   (when-let [res (re-matches (:re re) s)]
     (if-let [ids (seq (:groupnames re))]
-      (zipmap (cons nil ids) res)
+      (into {} (filter second (map vector (cons nil ids) res)))
       res)))
 
 (defn regex* [spec]
