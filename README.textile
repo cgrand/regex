@@ -17,4 +17,10 @@ h1. Example
   {:day "23", :month "10", :year "2007", nil "2007-10-23"}
   regex=> (exec datestamp-re "20X7-10-23")
   nil
-</pre>    
+</pre>  
+
+h1. License
+
+Copyright © 2010-2013 Christophe Grand
+
+Distributed under the Eclipse Public License, the same as Clojure.
